@@ -1,0 +1,401 @@
+<style type="text/css">
+.form-group.required .control-label:after {
+  content:"*";
+  color:red;
+  top:0px;
+}
+</style>
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">User Form</h1>
+    </div>  
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row" >
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                 <a ui-sref="dashboard.home"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form name="singupUser" role="form" ng-submit="submit()">
+                        <section>
+                        <h3>Profile (If it’s not social, admin can edit the profile) <a ng-show="showEditMode" ng-click="editMod()"><i class="fa fa-edit"></i></a></h3>
+                            <div ng-class="{'has-error': singupUser.email.$invalid && (singupUser.email.$dirty)}" class="col-lg-6 form-group required">
+                                <label class="control-label" >Email</label>
+                                <input type="email" ng-model="user.email" name="email" ng-disabled="editMode" class="form-control" placeholder="Enter Email"  required cuemail email-type="user">
+                             <!--    <p class="help-block">Example block-level help text here.</p> -->
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.email.$error" ng-if="singupUser.email.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="email">This email address is invalid.</span>
+                                  <span class="help-block error" ng-show="singupUser.email.$error.cuemail && singupUser.email.$dirty">This email already exist!</span>
+
+                                </div>
+                            </div>
+                            
+                            <div ng-class="{'has-error': singupUser.name.$invalid && (singupUser.name.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label" >Name</label>
+                                <input name="name" ng-model="user.name" ng-disabled="editMode" class="form-control" placeholder="Enter Name" required >
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.name.$error" ng-if="singupUser.name.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div ng-class="{'has-error': singupUser.password.$invalid && (singupUser.password.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label">Password</label>
+                                <input name="password" id="password" ng-model="user.password" type="password" ng-disabled="editMode" class="form-control" placeholder="Enter Password" required>
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.password.$error" ng-if="singupUser.password.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                </div>
+                            </div>
+                            <div ng-class="{'has-error': singupUser.cpassword.$invalid && (singupUser.cpassword.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label" >Confirm Password</label>
+                                <input  name="cpassword" id="cpassword" ng-model="cpassword" type="password" ng-disabled="editMode" class="form-control" placeholder="Confirm Password" required pw-check="password">
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.cpassword.$error" ng-if="singupUser.cpassword.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-show="singupUser.cpassword.$error.pwmatch && singupUser.cpassword.$dirty">Passwords don't match.</span>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+<!--                             <div class="form-group">
+                                <label>Static Control</label>
+                                <p class="form-control-static">email@example.com</p>
+                            </div> -->
+                            <div ng-class="{'has-error': singupUser.avtar.$invalid && (singupUser.avtar.$dirty)}"  class=" col-lg-6 form-group required">
+                                <label class="control-label" >Avtar Image</label>
+                                <input class="form-control-file" name="avtar" ng-model="user.avtar" ng-disabled="editMode" type="file" valid-file  required>
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.avtar.$error" ng-if="singupUser.avtar.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="extension">File is invalid.</span>
+                                </div>
+                            </div>
+                            <div class=" col-lg-6 form-group">
+                                <label>Age</label>
+                                <input ng-disabled="editMode" class="form-control" placeholder="Enter Age" ng-model="user.age">
+                            </div>
+                            <div class="clearfix"></div>
+<!--                             <div ng-class="{'has-error': singupUser.add_date.$invalid && (singupUser.add_date.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label">Joined Date</label>
+                                <input type="date" id="add_date" name="input" ng-model="add_date"   placeholder="yyyy-MM-dd" min="2013-01-01" max="2031-12-31" ng-disabled="editMode" class="form-control" required/>
+                                <date-util format="dd/MM/yyyy"></date-util>
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.add_date.$error" ng-if="singupUser.add_date.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                </div>
+                            </div>
+                            <div class=" col-lg-6 form-group">
+                                <label >Modified Date</label>
+                                <input ng-disabled="editMode" class="form-control" placeholder="Modified Date"/>
+                            </div>
+                            <div class="clearfix"></div> -->
+                            <div class=" col-lg-6 form-group">
+                                <label >Last Activity</label>
+                                <input type="date" id="last_login" name="last_login" ng-model="user.last_login"   placeholder="yyyy-MM-dd" min="2013-01-01" max="2031-12-31" ng-disabled="editMode" class="form-control"/>
+                            </div>
+                            <div class="col-lg-6 form-group">
+                                <label>Select Status</label>
+                                <select ng-disabled="editMode" class="form-control">
+                                    <option value =1 >Unban</option>
+                                    <option value =2 >Ban</option>
+                                </select>
+                            </div>
+                            <div class="clearfix"></div>
+                        </section>
+                        <section ng-show="showEditMode" >
+                        <h3>Favorites (list of places user added to favorites)</h3>
+                            <div class="col-lg-12 form-group">
+                                <ol>
+                                    <li>Club </li>
+                                    <ul>
+                                        <li>club 1</li>
+                                        <li>club 2</li>
+                                        <li>club 3</li>
+                                    </ul>
+                                    <li>Bar </li>
+                                    <ul>
+                                        <li>bar 1</li>
+                                        <li>bar 2</li>
+                                        <li>bar 3</li>
+                                    </ul>
+                                </ol>
+                            </div>
+
+                            <div class="clearfix"></div>
+
+<!--                             <div class=" col-lg-6 form-group">
+                                <label>Select Question</label>
+                                <select class="form-control">
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6 form-group">
+                                <label>Answer</label>
+                                <input class="form-control" placeholder="Enter Answer">
+                            </div> -->
+
+                        </section>
+                        <section ng-show="showEditMode" >
+                        <h3>list of places user liked</h3>
+                            <div class="col-lg-12 form-group">
+                                <ol>
+                                    <li>Club </li>
+                                    <ul>
+                                        <li>club 1</li>
+                                        <li>club 2</li>
+                                        <li>club 3</li>
+                                    </ul>
+                                    <li>Bar </li>
+                                    <ul>
+                                        <li>bar 1</li>
+                                        <li>bar 2</li>
+                                        <li>bar 3</li>
+                                    </ul>
+                                </ol>
+                            </div>
+
+                            <div class="clearfix"></div>
+
+                        </section>
+                        <section ng-show="showEditMode">
+                        <h3>Activity Log</h3>
+                            <div class="col-lg-12 form-group">
+                                <ol>
+                                    <li>Club </li>
+                                    <ul>
+                                        <li>club 1</li>
+                                        <li>club 2</li>
+                                        <li>club 3</li>
+                                    </ul>
+                                    <li>Bar </li>
+                                    <ul>
+                                        <li>bar 1</li>
+                                        <li>bar 2</li>
+                                        <li>bar 3</li>
+                                    </ul>
+                                </ol>
+                            </div>
+
+                            <div class="clearfix"></div>
+
+                        </section>
+                        <section ng-show="showEditMode" >
+                        <h3>Questions (list of questions and user answers)</h3>
+<!--                             <div class="col-lg-12 form-group">
+
+                                <h4>list of questions and user answers</h4>
+                                <ol>
+                                    <li>What is your Favourite book?</li>
+                                    <li>The Secret</li>
+                                    <li>What is your Favourite book?</li>
+                                    <li>The Master of Key System</li>
+                                </ol>
+                            </div>
+
+                            <div class="clearfix"></div> -->
+
+<!--                             <div class=" col-lg-6 form-group">
+                                <label>Select Question</label>
+                                <select class="form-control">
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6 form-group">
+                                <label>Answer</label>
+                                <input class="form-control" placeholder="Enter Answer">
+                            </div> -->
+                            <div class=" col-lg-6 form-group">
+                                <label>Question</label>
+                                <input ng-readonly class="form-control" placeholder="Enter Question" value="What is your Favourite book?">
+                            </div>
+                            <div class="col-lg-6 form-group">
+                                <label>Answer</label>
+                                <input class="form-control" placeholder="Enter Answer" value="The Secret">
+                            </div>
+                            <div class=" col-lg-6 form-group">
+                                <label>Question</label>
+                                <input class="form-control" placeholder="Enter Question" value="What is your Favourite Game?">
+                            </div>
+                            <div class="col-lg-6 form-group">
+                                <label>Answer</label>
+                                <input class="form-control" placeholder="Enter Answer" value="Footwal">
+                            </div>
+                        </section>
+
+<!--                             <div class="form-group">
+                                <label>Text area</label>
+                                <textarea class="form-control" rows="3"></textarea>
+                            </div> -->
+<!--                             <div class="form-group">
+                                <label>Checkboxes</label>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">Checkbox 1
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">Checkbox 2
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">Checkbox 3
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Inline Checkboxes</label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox">1
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox">2
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox">3
+                                </label>
+                            </div> -->
+<!--                             <div class="form-group">
+                                <label>Radio Buttons</label>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>Radio 1
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">Radio 2
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">Radio 3
+                                    </label>
+                                </div>
+                            </div> -->
+<!--                             <div class="form-group">
+                                <label>Inline Radio Buttons</label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="option1" checked>1
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="option2">2
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline3" value="option3">3
+                                </label>
+                            </div> -->
+<!--                             <div class="form-group">
+                                <label>Selects</label>
+                                <select class="form-control">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Multiple Selects</label>
+                                <select multiple class="form-control">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select>
+                            </div> -->
+                            <div class="col-lg-12 form-group">
+                            <button ng-disabled="singupUser.$invalid"  type="submit" class="btn btn-default">Submit Button</button>
+                            <a ui-sref="dashboard.users" class="btn btn-default">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.col-lg-6 (nested) -->
+                    <!-- <div class="col-lg-6">
+                        <h1>Disabled Form States</h1>
+                        <form role="form">
+                            <fieldset disabled>
+                                <div class="form-group">
+                                    <label for="disabledSelect">Disabled input</label>
+                                    <input class="form-control" id="disabledInput" type="text" placeholder="Disabled input" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="disabledSelect">Disabled select menu</label>
+                                    <select id="disabledSelect" class="form-control">
+                                        <option>Disabled select</option>
+                                    </select>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox">Disabled Checkbox
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Disabled Button</button>
+                            </fieldset>
+                        </form>
+                        <h1>Form Validation States</h1>
+                        <form role="form">
+                            <div class="form-group has-success">
+                                <label class="control-label" for="inputSuccess">Input with success</label>
+                                <input type="text" class="form-control" id="inputSuccess">
+                            </div>
+                            <div class="form-group has-warning">
+                                <label class="control-label" for="inputWarning">Input with warning</label>
+                                <input type="text" class="form-control" id="inputWarning">
+                            </div>
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError">Input with error</label>
+                                <input type="text" class="form-control" id="inputError">
+                            </div>
+                        </form>
+                        <h1>Input Groups</h1>
+                        <form role="form">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">@</span>
+                                <input type="text" class="form-control" placeholder="Username">
+                            </div>
+                            <div class="form-group input-group">
+                                <input type="text" class="form-control">
+                                <span class="input-group-addon">.00</span>
+                            </div>
+                            <div class="form-group input-group">
+                                <span class="input-group-addon"><i class="fa fa-eur"></i>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Font Awesome Icon">
+                            </div>
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">$</span>
+                                <input type="text" class="form-control">
+                                <span class="input-group-addon">.00</span>
+                            </div>
+                            <div class="form-group input-group">
+                                <input type="text" class="form-control">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button"><i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </div> -->
+                    <!-- /.col-lg-6 (nested) -->
+                </div>
+                <!-- /.row (nested) -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
