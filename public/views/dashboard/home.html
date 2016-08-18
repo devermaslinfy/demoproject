@@ -1,15 +1,35 @@
+<style type="text/css">
+    .mtb10{
+        margin-bottom: 15px;
+    }
+
+</style>
+
 <div>
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Dashboard</h1>
+            <h1 class="page-header">Dashboard </h1>
         </div>
         <!-- /.col-lg-12 -->
     </div>
     <!-- /.row -->
-    <div data-ng-controller="MainCtrl" class="row">
-        
-        <stats number="6" comments="Total Users!" colour="primary" type="user"></stats>
-        <stats number="12" comments="Total Clients!" colour="primary" type="user"></stats>
+    <div class="row">
+        <div class="col-lg-12 mtb10">
+            <label class="control-label">Sort Count</label>
+            <select ng-model="count" ng-change="getUserCount(count)" data-ng-init="getUserCount()">
+                <option value ="" >-Filter-</option>
+                <option ng-selected="{{ curr_selected == 1}}" value ="1" >Today</option>
+                <option ng-selected="{{ curr_selected == 2}}" value ="2" >Last 7 Days</option>
+                <option ng-selected="{{ curr_selected == 3}}" value ="3" >Last Month</option>
+                <option ng-selected="{{ curr_selected == 4}}" value ="4" >All</option>
+            </select>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+
+    <div class="row">
+        <stats number="number" goto="goto" comments="Total Users!" colour="primary" type="user"></stats>
+        <stats goto="goto_c" number="totalclient" comments="Total Clients!" colour="primary" type="user"></stats>
         <stats number="18" comments="Total Likes!" colour="green" type="info"></stats>
         <stats number="18" comments="Highest likes!" colour="red" type="info"></stats>
         <stats number="18" comments="Highest Favorites!" colour="yellow" type="info"></stats>
@@ -18,23 +38,57 @@
 
     </div>
     
-<div class="row">
+<!-- <div class="row">
     <div class="col-lg-12">
         <h1 class="page-header">Charts</h1>
     </div>
-    <!-- /.col-lg-12 -->
-</div>
-<div  class="row">
+  
+</div> -->
+<!-- <div  class="row">
 
-    <div class="col-lg-12 col-sm-12" id="gbar-chart">
+    <div class="col-lg-6 col-sm-12" id="line-chart" ng-controller="MainCtrl">
+
         <div class="panel panel-default">
-            <div class="panel-heading">Bar Chart</div>
+            <div class="panel-heading">User Chart
+                <div class="btn-group pull-right">
+                <label class="control-label">Filter</label>
+                <select ng-model="category" ng-change="getUserData(category)" data-ng-init="getUserData()">
+                                      <option value ="" >-Filter-</option>
+                                      <option value ="1" >Today</option>
+                                      <option value ="2" >Last 7 Days</option>
+                                      <option value ="3" >Last Month</option>
+                                      <option value ="4" >All</option>
+                </select>
+            </div>
+            </div>
             <div class="panel-body">
-                <canvas id="bar" class="chart chart-bar" data="bar.data" labels="bar.labels" series="bar.series"
-                options="bar.options"></canvas>
+                <canvas id="line" class="chart chart-line chart-xl" data="line.data" labels="line.labels" legend="true"
+                click="line.onClick" series="line.series"></canvas>
             </div>
         </div>
     </div>
-</div>
+
+    <div class="col-lg-6 col-sm-12" id="line-chart" ng-controller="MainCtrl">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Client Chart
+                <div class="btn-group pull-right">
+                <label class="control-label">Filter</label>
+                <select ng-model="category" ng-change="getClientData(category)" data-ng-init="getClientData()">
+                                      <option value ="" >-Filter-</option>
+                                      <option value ="1" >Today</option>
+                                      <option value ="2" >Last 7 Days</option>
+                                      <option value ="3" >Last Month</option>
+                                      <option value ="4" >All</option>
+                </select>
+            </div>
+            </div>
+            <div class="panel-body">
+                <canvas id="line" class="chart chart-line chart-xl" data="line.data" labels="line.labels" legend="true"
+                click="line.onClick" series="line.series"></canvas>
+            </div>
+        </div>
+    </div>                    
+</div> -->
 
 </div>

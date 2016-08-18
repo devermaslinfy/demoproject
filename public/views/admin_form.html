@@ -14,59 +14,69 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <form role="form">
-                            <div class="col-lg-6 form-group rquired">
+                        <form name="registerAdmin" role="form" ng-submit="editMode ? edit() : save()"  >
+                            <div ng-class="{'has-error': registerAdmin.email.$invalid && (registerAdmin.email.$dirty)}" class="col-lg-6 form-group rquired">
                                 <label class="control-label">Email</label>
-                                <input required="true" class="form-control" placeholder="Enter Email">
-                             <!--    <p class="help-block">Example block-level help text here.</p> -->
+                                <input required="true" ng-model="admin.email" name="email" class="form-control"  ng-pattern='/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/' placeholder="Enter Email" cuemail email-type="{{ editMode ? 'editadmin' : 'admin' }}" preval="{{ preval }}">
+                                <div class="col-lg-6 form-group" ng-messages="registerAdmin.email.$error" ng-if="registerAdmin.email.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="pattern">This email address is invalid.</span>
+                                  <span class="help-block error" ng-message="cuemail">This email already exist!</span>
+
+                                </div>
                             </div>
-                            <div class=" col-lg-6 form-group rquired">
+                            <div ng-class="{'has-error': registerAdmin.name.$invalid && (registerAdmin.name.$dirty)}" class=" col-lg-6 form-group rquired">
                                 <label class="control-label" >Name</label>
-                                <input required="true" class="form-control" placeholder="Enter Name">
+                                <input name="name" ng-model="admin.name" required="true" class="form-control" placeholder="Enter Name" ng-pattern="/^[a-zA-Z ]*$/" ng-maxlength="100">
+                                <div class="col-lg-6 form-group" ng-messages="registerAdmin.name.$error" ng-if="registerAdmin.name.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                    <span class="help-block error" ng-message="maxlength">This field maximum length is 100 characters.</span>
+                                  <span class="help-block error" ng-message="pattern">Please enter valid characters.</span>
+                                </div>
                             </div>
                             <div class="clearfix"></div>
-<!--                             <div class=" col-lg-6 form-group">
-                                <label>Password</label>
-                                <input class="form-control" placeholder="Enter Password">
+
+                            <div ng-class="{'has-error': registerAdmin.password.$invalid && (registerAdmin.password.$dirty)}" class=" col-lg-6 form-group ">
+                                <label class="control-label">Password</label>
+                                <input name="password" id="password" ng-model="admin.password" type="password" ng-minlength="8" class="form-control"  ng-pattern="/^\S*$/" placeholder="Enter Password" >
+                                <div class="col-lg-6 form-group" ng-messages="registerAdmin.password.$error" ng-if="registerAdmin.password.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="pattern">Plese enter valid characters.</span>
+                                  <span class="help-block error" ng-message="minlength">This field minimum length is 8 characters.</span>
+                                  
+                                </div>
                             </div>
-                            <div class=" col-lg-6 form-group">
-                                <label>Confirm Password</label>
-                                <input class="form-control" placeholder="Confirm Password">
-                            </div>
-                            <div class="clearfix"></div> -->
-<!--                             <div class="form-group">
-                                <label>Static Control</label>
-                                <p class="form-control-static">email@example.com</p>
-                            </div> -->
-<!--                             <div class=" col-lg-6 form-group">
-                                <label>Avtar Image</label>
-                                <input type="file">
-                            </div>
-                            <div class=" col-lg-6 form-group">
-                                <label>Age</label>
-                                <input class="form-control" placeholder="Enter Age">
+                            <div ng-class="{'has-error': registerAdmin.cpassword.$invalid && (registerAdmin.cpassword.$dirty)}" class=" col-lg-6 form-group ">
+                                <label class="control-label" >Confirm Password</label>
+                                <input  name="cpassword" id="cpassword" ng-model="cpassword" type="password" class="form-control" placeholder="Confirm Password"  pw-check="password">
+                                <div class="col-lg-6 form-group" ng-messages="registerAdmin.cpassword.$error" ng-if="registerAdmin.cpassword.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="pwmatch">Passwords don't match.</span>
+                                </div>
                             </div>
                             <div class="clearfix"></div>
- -->
+
                             <div class="col-lg-6 form-group">
                                 <label>Select Status</label>
-                                <select class="form-control">
-                                    <option value =1 >Active</option>
-                                    <option value =2 >Deactive</option>
+                                <select name="status" ng-model="admin.status" class="form-control">
+                                    <option value="">---Please select status---</option>
+                                    <option ng-selected="admin.status == 1" value =1 >Active</option>
+                                    <option ng-selected="admin.status == 2" value =2 >Deactive</option>
                                 </select>
                             </div>
 
                             <div class="col-lg-6 form-group">
                                 <label>Admin Type</label>
-                                <select class="form-control">
-                                    <option value =1 >Super Admin</option>
-                                    <option value =2 >Admin</option>
+                                <select name="admin_type" ng-model="admin.admin_type" class="form-control">   
+                                    <option value="">---Please select admin type---</option>
+                                    <option ng-selected="admin.admin_type == 2" value =2 >Admin</option>
+                                    <option ng-selected="admin.admin_type == 1" value =1 >Super Admin</option>
                                 </select>
                             </div>
                             <div class="clearfix"></div>
 
                             <div class="col-lg-12 form-group">
-                            <button type="submit" class="btn btn-default">Submit Button</button>
+                            <button ng-disabled="registerAdmin.$invalid" type="submit" class="btn btn-default">Submit Button</button>
                             <a ui-sref="dashboard.admins" class="btn btn-default">Cancel</a>
                             </div>
                         </form>

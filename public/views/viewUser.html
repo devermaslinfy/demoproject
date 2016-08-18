@@ -1,0 +1,310 @@
+<style type="text/css">
+.form-group.required .control-label:after {
+  content:"*";
+  color:red;
+  top:0px;
+}
+.product .img-responsive {
+    margin: 0 auto;
+}
+.disabled {
+  cursor: not-allowed;
+}
+</style>
+<script type="text/javascript">
+function readURL(input) {
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#blah').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$("#imgInp").change(function(){
+    readURL(this);
+});
+function filterByID(obj,id) {
+  if (obj in obj && obj.question_id === id ) {
+    return obj.answer;
+  } else {
+    return "no answer";
+  }
+}
+</script>
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">User Form</h1>
+    </div>  
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row" >
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                 <a ui-sref="dashboard.home"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form name="singupUser" role="form" ng-submit="updateUser(avtar)" >
+                        <section ng-init="isReplyFormOpen=false">
+                        <h3>Profile (If it’s not social, admin can edit the profile) <a ng-show="showEditMode && social" ng-click="editMod()"><i class="fa fa-edit"></i></a></h3>
+                            <div ng-class="{'has-error': singupUser.avtar.$invalid && (singupUser.avtar.$dirty)}"  class=" col-lg-6 form-group ">
+                             <img ng-show="singupUser.avtar.$valid" ngf-thumbnail="avtar" class="thumb">
+                             <img ng-show="!singupUser.avtar.$dirty" width="100px" height="100px" src="{{ user.avtar || 'no_image.jpeg' }}" >
+                             <label class="control-label" >Avtar Image</label>
+                              <input ng-disabled="editMode" type="file" ngf-resize="{width: 100, height: 100}" ngf-select ng-model="avtar" name="avtar" ngf-max-size="2MB"  ngf-model-invalid="errorFile"/>
+                                <div class="col-xs-5 " ng-messages="singupUser.avtar.$error" ng-if="singupUser.avtar.$dirty">
+                                       <!--  <span class="help-block error" ng-message="required">This field is required.</span> -->
+                                        <span class="help-block error" ng-message="maxSize">File too large {{errorFile.size / 1000000|number:1}}MB: max 2M.</span>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div ng-class="{'has-error': singupUser.email.$invalid && (singupUser.email.$dirty)}" class="col-lg-6 form-group required">
+                                <label class="control-label" >Email</label>
+                                <input type="email" ng-model="user.email" name="email" ng-disabled="editMode" class="form-control" placeholder="Enter Email"  ng-pattern='/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/' required cuemailup email-type="user">
+                             <!--    <p class="help-block">Example block-level help text here.</p> -->
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.email.$error" ng-if="singupUser.email.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="pattern">This email address is invalid.</span>
+                                  <span class="help-block error" ng-show="singupUser.email.$error.cuemail && singupUser.email.$dirty">This email already exist!</span>
+
+                                </div>
+                            </div>
+                            
+                            <div ng-class="{'has-error': singupUser.name.$invalid && (singupUser.name.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label" >Name</label>
+                                <input name="name" ng-model="user.name" ng-disabled="editMode" class="form-control" placeholder="Enter Name" required >
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.name.$error" ng-if="singupUser.name.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+<!--                             <div ng-class="{'has-error': singupUser.password.$invalid && (singupUser.password.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label">Password</label>
+                                <input name="password" id="password" ng-model="user.password" type="password" ng-disabled="editMode" class="form-control" placeholder="Enter Password" required>
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.password.$error" ng-if="singupUser.password.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                </div>
+                            </div>
+                            <div ng-class="{'has-error': singupUser.cpassword.$invalid && (singupUser.cpassword.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label" >Confirm Password</label>
+                                <input  name="cpassword" id="cpassword" ng-model="cpassword" type="password" ng-disabled="editMode" class="form-control" placeholder="Confirm Password" required pw-check="password">
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.cpassword.$error" ng-if="singupUser.cpassword.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-show="singupUser.cpassword.$error.pwmatch && singupUser.cpassword.$dirty">Passwords don't match.</span>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div> -->
+<!--                             <div class="form-group">
+                                <label>Static Control</label>
+                                <p class="form-control-static">email@example.com</p>
+                            </div> -->
+
+                            <div ng-class="{'has-error': singupUser.age.$invalid && (singupUser.age.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label" >Age</label>
+                                <input name="age" id="age" type="number" ng-disabled="editMode" class="form-control" placeholder="Enter Age" ng-model="user.age" required >
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.age.$error" ng-if="singupUser.age.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="number">Enter only number.</span>
+                                </div>
+                            </div>
+                            <div ng-class="{'has-error': singupUser.add_date.$invalid && (singupUser.add_date.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label">Joined Date</label>
+                                <p class="input-group">
+                                <input type="text" id="add_date" name="add_date" ng-model="user.add_date"   uib-datepicker-popup="{{format}}"  ng-disabled="editMode" class="form-control" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                                </span>
+                                </p>
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.add_date.$error" ng-if="singupUser.add_date.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="date">Invalid date format.</span>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+<!--                             <div class=" col-lg-6 form-group">
+                                <label >Modified Date</label>
+                                <input ng-disabled="editMode" class="form-control" placeholder="Modified Date"/>
+                                <p class="input-group">
+                                  <input ng-disabled="editMode" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="last_login" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                                  <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                                  </span>
+                                </p>
+                            </div> -->
+                            <div ng-class="{'has-error': singupUser.last_login.$invalid && (singupUser.last_login.$dirty)}" class="col-md-6 form-group required">
+                                <label class="control-label" >Last Activity</label>
+                                <p class="input-group">
+                                  <input type="text"  ng-disabled="editMode" class="form-control" uib-datepicker-popup="{{format}}" name="last_login" ng-model="user.last_login" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                                  <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+                                  </span>
+                                </p>
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.last_login.$error" ng-if="singupUser.last_login.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="date">Invalid date format.</span>
+                                </div>
+                            </div>
+
+<!--                             <div class=" col-lg-6 form-group">
+                                <label >Last Activity</label>
+                                <input type="text" id="last_login" name="last_login" ng-model="user.last_login"   placeholder="yyyy-MM-dd" min="2013-01-01" max="2031-12-31" ng-disabled="editMode" class="form-control"/>
+                            </div> -->
+                            <div class="col-lg-6 form-group">
+                                <label>Select Status</label>
+                                <select ng-disabled="editMode" ng-model="user.status" class="form-control">
+                                    <option value="">---Please select status---</option>
+                                        <option ng-selected="{{user.status == 1}}" value ="1" >Active</option>
+                                        <option  ng-selected="{{user.status == 2}}" value ="2"  >Deactive</option>
+                                        <option  ng-selected="{{user.status == 3}}" value ="3"  >Pending</option>
+                                </select>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-lg-12 form-group">
+                                <a ng-disabled="editMode" ng-class="{disabled:editMode}" ng-click="isReplyFormOpen = !isReplyFormOpen" class="btn btn-default">Change password</a>
+                                <button ng-disabled="editMode"  type="button" class="btn btn-default"> Send Reset Password link</button>
+                            </div>
+
+                            <div ng-if="isReplyFormOpen" ng-class="{'has-error': singupUser.password.$invalid && (singupUser.password.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label">Password</label>
+                                <input name="password" id="password" ng-model="user.password" type="password"  ng-pattern="/^\S*$/" ng-minlength="8" ng-disabled="editMode" class="form-control" placeholder="Enter Password" required>
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.password.$error" ng-if="singupUser.password.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="pattern">Plese enter valid characters.</span>
+                                  <span class="help-block error" ng-message="minlength">This field minimum length is 8 characters.</span>
+                                </div>
+                            </div>
+                            <div ng-if="isReplyFormOpen" ng-class="{'has-error': singupUser.cpassword.$invalid && (singupUser.cpassword.$dirty)}" class=" col-lg-6 form-group required">
+                                <label class="control-label" >Confirm Password</label>
+                                <input  name="cpassword" id="cpassword" ng-model="cpassword" type="password" ng-disabled="editMode" class="form-control" placeholder="Confirm Password" required pw-check="password">
+                                <div class="col-lg-6 form-group" ng-messages="singupUser.cpassword.$error" ng-if="singupUser.cpassword.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-show="singupUser.cpassword.$error.pwmatch && singupUser.cpassword.$dirty">Passwords don't match.</span>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+                            <div class="col-lg-12 form-group">
+                                <button ng-disabled="singupUser.$invalid"  type="submit" class="btn btn-default">Submit Button</button>
+                                <a ui-sref="dashboard.users" class="btn btn-default">Cancel</a>
+                            </div>
+                        </section>
+                    </form>
+                        <section ng-show="showEditMode" >
+                        <h3>Favorites (list of places user added to favorites)</h3>
+                            <div class="col-lg-12 form-group">
+                                <ol>
+                                    <li>Club </li>
+                                    <ul>
+                                        <li>club 1</li>
+                                        <li>club 2</li>
+                                        <li>club 3</li>
+                                    </ul>
+                                    <li>Bar </li>
+                                    <ul>
+                                        <li>bar 1</li>
+                                        <li>bar 2</li>
+                                        <li>bar 3</li>
+                                    </ul>
+                                </ol>
+                            </div>
+
+                            <div class="clearfix"></div>
+<!--                             <div class=" col-lg-6 form-group">
+                                <label>Select Question</label>
+                                <select class="form-control">
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                    <option>What is your Favourite book?</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6 form-group">
+                                <label>Answer</label>
+                                <input class="form-control" placeholder="Enter Answer">
+                            </div> -->
+
+                        </section>
+                        <section ng-show="showEditMode" >
+                        <h3>list of places user liked</h3>
+                            <div class="col-lg-12 form-group">
+                                <ol>
+                                    <li>Club </li>
+                                    <ul>
+                                        <li>club 1</li>
+                                        <li>club 2</li>
+                                        <li>club 3</li>
+                                    </ul>
+                                    <li>Bar </li>
+                                    <ul>
+                                        <li>bar 1</li>
+                                        <li>bar 2</li>
+                                        <li>bar 3</li>
+                                    </ul>
+                                </ol>
+                            </div>
+
+                            <div class="clearfix"></div>
+
+                        </section>
+                        <section ng-show="showEditMode">
+                        <h3>Activity Log</h3>
+                            <div class="col-lg-12 form-group">
+                                <ol>
+                                    <li>Club </li>
+                                    <ul>
+                                        <li>club 1</li>
+                                        <li>club 2</li>
+                                        <li>club 3</li>
+                                    </ul>
+                                    <li>Bar </li>
+                                    <ul>
+                                        <li>bar 1</li>
+                                        <li>bar 2</li>
+                                        <li>bar 3</li>
+                                    </ul>
+                                </ol>
+                            </div>
+
+                            <div class="clearfix"></div>
+
+                        </section>
+                        <section ng-show="showEditMode" >
+                        <h3>Questions (list of questions and user answers)</h3>
+                            <div class="col-lg-12 form-group">
+                                <ul class="example-animate-container">
+                                    <li style="list-style-type:none" class="animate-repeat" ng-repeat="question in user.questions ">
+                                      Question :<!-- {{$index + 1}}  --> {{(question.question+'')}} </br>
+                                      <!-- {{ question._id }} -->
+                                      <!-- {{ (user.answer|filter{question_id:question._id}) }}  -->
+                                      <!-- ng-repeat="subject in results.subjects | filter:{grade:'C'} -->
+                                      Answer : {{ (user.answer|filter:{question_id:question._id})[0].answer }}
+                                    </li>
+                                    <li ng-show="!questions.length">No Question</li>
+                                <ul>
+                            </div>
+
+                            <div class="clearfix"></div>
+                        </section>
+
+
+                    </div>
+
+                </div>
+                <!-- /.row (nested) -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+</div>

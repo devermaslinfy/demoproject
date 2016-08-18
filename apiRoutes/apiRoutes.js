@@ -13,6 +13,77 @@ var questions = require('../api/app/models/questions');
 var businessTypes = require('../api/app/models/businessType');
 var advertisements = require('../api/app/models/advertisements');
 var mongoose = require('mongoose');
+var multer  = require('multer');
+var formidable = require('formidable');
+//var reversePopulate = require('mongoose-reverse-populate');
+var async = require('async');
+util = require('util');
+var validation = require("validator");
+var consts = require('../path_to_consts.js');
+
+//var db = require('../api/database.js');
+//var upload = multer({ dest: 'public/images/user/' });
+//var fname='defaultimg.png';
+/*var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './upload')
+  },
+  filename: function (req, file, cb) {
+   fname=file.fieldname + '-' + Date.now()+'.'+file.originalname.split('.')[1];
+    cb(null,fname)
+  }
+})*/
+var uploadnew = function (name) {
+    try {
+        // Configuring appropriate storage 
+        var storage = multer.diskStorage({
+            // Absolute path
+            destination: function (req, file, callback) {
+                callback(null, 'public/images/'+name);
+            },
+            // Match the field name in the request body
+/*            filename: function (req, file, callback) {
+                 callback(null, file.fieldname + '-'  + Date.now()+'.'+file.mimetype.split('/')[1]);
+            }*/
+            rename: function (req, file, callback) {
+                callback(null, file.fieldname + '-'  + Date.now()+'.'+file.originalname.split('.')[1]);
+              }
+        });
+        return storage;
+    } catch (ex) {
+        console.log("Error :\n"+ex);
+    }
+}
+var storage =   multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, 'public/images/user');
+  },
+  rename: function (req, file, callback) {
+    callback(null, file.fieldname + '-'  + Date.now()+'.'+file.originalname.split('.')[1]);
+  }
+/*  onFileUploadStart: function (file) {
+    console.log(file.originalname + ' is starting ...')
+  },
+
+  onFileUploadComplete: function (file) {
+        console.log(file.fieldname + ' uploaded to  ' + file.path);
+        done = true;
+        var id= file.fieldname;
+        var str = file.path;
+        var image = str.replace('public', '');
+
+        var slidegegevens = {
+            "id": id,
+            "img": image
+        };
+    }*/
+
+});
+
+var upload = multer({ storage: storage });
+//var upload = multer({ dest: 'uploads/' })
+//var upload = multer({ dest: 'public/images/user' })
+var fs = require('fs');
 //var url = require('url');
 app.set('superSecret', config.secret);
 // Load the bcrypt module
@@ -27,47 +98,290 @@ app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
     next();
 });
+app.use(function(req, res, next) {
+  if (req.url == '/photo' && req.method.toLowerCase() == 'post') {
+    // parse a file upload 
+    var form = new formidable.IncomingForm();
 
-apiRoutes.post('/register', function(req, res) {
-    User.findOne({
-        email: req.body.email
-    }, function(err, user) {
-        if (err) throw err;
-        if (user) {
-            console.log(user);
-            res.json({ message: 'Duplicate', status: 101 })
-        } else if (!user) {
-            bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-                bcrypt.hash("my password", salt, function(err, hash) {
-                    if(err){
-                        res.json(err);
-                    }
-                    // Store hash in your password DB.
-                    var usr = new User({
-                        email: req.body.email,
-                        name: req.body.name,
-                        password: hash,
-                        avtar: req.body.avtar,
-                        age: req.body.age,
-                        questions: req.body.questions,
-                        //add_date: req.body.add_date,
-                        last_login: req.body.last_login,
-                        //last_edit: req.body.last_edit,
-                        login_type: req.body.login_type,
-                        status: req.body.status
-                    })
-                    usr.save(function(err) {
-                        if (err) {
-                            res.json(err)
-                            res.json({ status: 102, message: 'Unknown' })
-                        }
-                        res.json({ status: 100, message: 'Ok' })
-                    })
-                });
-            });
-        }
-    })
+    form.parse(req, function(err, fields, files) {
+        console.log(fields);
+      res.writeHead(200, {'content-type': 'text/plain'});
+      res.write('received upload:\n\n');
+      res.end(util.inspect({fields: fields, files: files}));
+    });
+
+    return;
+  }
 });
+apiRoutes.post('/photo',function(req,res){
+    //console.log(req.body)
+ var form = new formidable.IncomingForm();
+
+    form.parse(req, function(err, fields, files) {
+        var fields = JSON.parse(fields.user);
+        console.log(fields.email);
+        var filename = '';
+      //res.writeHead(200, {'content-type': 'text/plain'});
+      //res.write('received upload:\n\n');
+      //console.log(files.avtar);
+      //upload.single(files);
+              // TODO: make sure my_file and project_id exist   
+        //files.avtar.fieldname + '-' + Date.now()+'.'+file.originalname.split('.')[1] 
+        fs.readFile(files.avtar.path, function (err, data) {
+          // ...
+          var filename = Date.now()+'-'+files.avtar.name;
+          var newPath = "./public/images/user/"+filename;
+          //console.log(newPath);
+          fs.writeFile(newPath, data, function (err) {
+            //res.redirect("back");
+
+          });
+        });
+        User.findOne({
+            email: fields.email
+        }, function(err, user) {
+            if (err) {
+                res.json({ message: err, status: 403 })
+            }
+            if (user) {
+                console.log(user);
+                res.json({ message: 'Duplicate', status: 101 })
+            } else if (!user) {
+                bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+                    bcrypt.hash(fields.password, salt, function(err, hash) {
+                        if(err){
+                            res.json(err);
+                        }
+                        // upload image
+                        //var newImage = "images/user/"+app.settings.id;
+    /*                    var newPath = __dirname + "/images/user"+"_"+app.settings.id;
+                        fs.writeFile(newPath, req.files.avtar, function (err) {
+                            if (err) throw err;
+                            console.log("It's saved");
+                        });*/
+                         // Store hash in your password DB.
+                        var usr = new User({
+                            email: fields.email,
+                            name: fields.name,
+                            password: hash,
+                            avtar: filename,
+                            age: (fields.age == null || undefined) ? fields.age : '',
+                            //questions: fields.user.questions,
+                            //add_date: req.body.add_date,
+                            //last_login: fields.last_login,
+                            //last_edit: req.body.last_edit,
+                            login_type: 1,
+                            status: 1
+                        })
+                        usr.save(function(err) {
+                            if (err) {
+                                res.json(err)
+                                res.json({ status: 102, message: 'Unknown' })
+                            }
+                            res.json({ status: 100, message: 'Ok' })
+                        })
+                    });
+                });
+            }
+        })
+      //res.end(util.inspect({fields: fields, files: files}));
+    });
+
+    return;
+    //console.log(req.body);
+/*    Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
+// Get the size of an object
+var size = Object.size(req.files);*/
+//res.end("fdf--"+Object.keys(req.file.fieldname));
+/*    if(Object.keys(req.files).length === 0 && req.files.constructor === Object){
+            res.end('empty');
+    } else {
+            res.end('not empty');
+    }*/
+
+            //console.log(req.body);
+        //console.log(req.files);
+        //console.log(req.file.filename);
+        //res.end("File is uploaded");
+/*    upload(req,res,function(err) {
+        //console.log(req.body);
+        console.log(req.file.filename);
+        if(err) {
+            return res.end("Error uploading file.");
+        }
+        res.end("File is uploaded");
+    });*/
+});
+
+apiRoutes.post('/register',upload.single('avtar'),function(req, res) {
+    console.log(req.body.email)
+    var image = '';
+    console.log(req.body);
+    if (req.body.email == null || undefined || req.body.password == null || undefined ||  !validation.isEmail(req.body.email || req.body.name == null || undefined || req.body.age == null || undefined)  ) {
+        res.json({ status: 102, message: 'Unknown' })
+    } else {
+        User.findOne({
+            email: req.body.email
+        }, function(err, user) {
+            if (err) {
+                res.json({ message: err, status: 403 })
+            }
+            if (user) {
+                console.log(user);
+                res.json({ message: 'Duplicate', status: 101 })
+            } else if (!user) {
+                bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+                    bcrypt.hash(req.body.password, salt, function(err, hash) {
+                        if(err){
+                            console.log(err);
+                            res.json(err);
+                        }
+                        if (typeof req.file !== "undefined") {
+                            var avtar = req.file.filename;
+                        } else {
+                            var avtar = 'noimage.jpeg'; 
+                        } 
+                        var usr = new User({
+                            email: req.body.email,
+                            name: req.body.name,
+                            password: hash,                 
+                            age: (req.body.age == null || undefined) ? '': req.body.age,
+                            avtar:avtar,
+                            login_type: (req.body.login_type) ? req.body.login_type : 1,
+                            status: req.body.status
+                        })
+                        //res.json({ status: 100, message: 'Ok' })
+                        usr.save(function(err,usr) {
+                            if (err) {
+                                res.json(err)
+                                //res.json({ status: 102, message: 'Unknown' })
+                            } else {
+                                res.json({ status: 100, message: 'Ok', lastid: usr._id })
+                            }
+
+                        })
+                    });
+                });
+            }
+        })
+    }
+
+});
+apiRoutes.post('/regnext',function(req,res){
+    console.log(req.get('Content-Type'));
+    if ((req.body.lastid == null || undefined || req.body.questions == null || undefined || req.body.answer == null || undefined) && req.get('Content-Type') !== 'application/json') {
+        res.json({ status: 102, message: 'Unknown' })
+    } else {
+        
+        var ans = [ ];
+        if(req.body.answer.constructor === Array){
+        ans = req.body.answer;
+        } else {
+        ans.push(req.body.answer);
+        }
+        var questions = [ ];
+        if(req.body.questions.constructor === Array){
+        questions = req.body.questions;
+        } else {
+        questions.push(req.body.questions);
+        }
+        console.log(ans);
+        var idString = req.body.lastid;
+        var id = new mongoose.Types.ObjectId(idString)
+        User.findOneAndUpdate({"_id" :id },{"$addToSet" : {"questions":{"$each":questions},"answer":{"$each":ans }}},function(err, result)
+        {
+          if(err){
+            res.json({ status: 102, message: 'Unknown' })
+          } else {
+            res.json({ status: 100, message: 'ok' })
+          }
+
+          //res.json(result);
+        });
+    }
+
+});
+apiRoutes.post('/registerNext',upload.single(''),function(req,res){
+/*var bulk = db.users.initializeOrderedBulkOp();
+var count = 0;*/
+var ans = [ ];
+if(req.body.answer.constructor === Array){
+    ans = req.body.answer;
+} else {
+    ans.push(req.body.answer);
+}
+var questions = [ ];
+if(req.body.questions.constructor === Array){
+    questions = req.body.questions;
+} else {
+    questions.push(req.body.questions);
+}
+
+
+console.log(typeof req.body.answer)
+console.log(typeof req.body.questions)
+res.json({ status: 102, message: 'Unknown' });
+return;
+    if (req.body.lastid == null || undefined || req.body.questions == null || undefined || req.body.answer == null || undefined ) {
+       //res.json({ status: 200, message: 'Please send peremeters Validation Error ' });
+       res.json({ status: 102, message: 'Unknown' })
+    } else{
+        var idString = req.body.lastid;
+        var id = new mongoose.Types.ObjectId(idString)
+        User.findOne({
+           "_id":id
+        }, function(err, user){
+            if(err){
+                res.json(err)
+            }
+            console.log(questions)
+            if (user) {
+                User.findOneAndUpdate({"_id" :id },{"$addToSet" : {"questions":{"$each":questions}}},function(err, result)
+                {
+                  if(err){
+                    res.json({ status: 103, message: err })
+                  } else {
+                    //console.log(result);
+                    var answer = new Array();
+                    ans.forEach(function(value) {
+                        value = value.replace(/[{}]/g,'');
+                        var val = value.split(':');
+                        var question_id = val[0];
+                        //console.log('one'+one)
+                        var answer = val[1];
+                        User.update({ "_id": id },{ 
+                            "$addToSet": { "answer":{question_id,answer } } 
+                        },function(err,result){
+                            if(err){
+                                res.json({ status: 103, message: err })
+                            } else {
+                                //res.json({ status: 100, message: 'ok' })
+                            }
+                            console.log(result);
+                        });
+
+
+                    });
+                    res.json({ status: 100, message: 'ok' })
+                  }
+
+                  //res.json(result);
+                });
+                
+            } else {
+                res.json({ status: 102, message: 'Unknown' })
+            }
+        })
+    }
+
+})
 apiRoutes.post('/signup', function(req, res) {
     Admin.findOne({
         email: req.body.email
@@ -76,7 +390,7 @@ apiRoutes.post('/signup', function(req, res) {
             res.json(err)
         }
         if (admin) {
-            console.log('admin');
+            console.log(admin);
             res.json({email: req.body.email})
             //res.json({ message: 'Duplicate', status: req.body.email })
         } else if (!admin) {
@@ -286,7 +600,7 @@ apiRoutes.post('/addApi', function(req, res) {
         break;
 
         case "questions":
-         if (req.body.question == null || undefined || req.body.answer == null || undefined || req.body.add_date == null || undefined ) {
+         if (req.body.question == null || undefined || req.body.answer == null || undefined) {
                //res.json({ status: 200, message: 'Please send peremeters Validation Error ' });
                res.json({ status: 102, message: 'Unknown' })
             }
@@ -300,8 +614,8 @@ apiRoutes.post('/addApi', function(req, res) {
                 } else if (!question) {
                     var ques = new questions({
                         question: req.body.question,
-                        answer: req.body.answer,
-                        add_date: req.body.add_date
+                        answer: req.body.answer
+                        //add_date: req.body.add_date
 
                     })
                     ques.save(function(err) {
@@ -389,6 +703,7 @@ apiRoutes.post('/addApi', function(req, res) {
 apiRoutes.post('/authenticate', function(req, res) {
 
     // find the user
+    console.log(req.body.email)
     Admin.findOne({
         email: req.body.email
     }, function(err, admin) {
@@ -447,6 +762,49 @@ apiRoutes.post('/authenticate', function(req, res) {
                     id: admin.id
                 });
             }*/
+        }
+
+    });
+});
+apiRoutes.post('/authenticateUser', function(req, res) {
+    console.log(req.body.email)
+    console.log(req.body.password);
+    // find the user
+    User.findOne({
+        email: req.body.email
+    }, function(err, user) {
+    console.log(user)
+        if (err) throw err;
+        if (!user) {
+            res.json({ status: 102, message: 'Authentication failed. User not found.' });
+        } else if (user) {
+            // Load password hash from DB
+            bcrypt.compare(req.body.password, user.password, function(err, resp) {
+                // res === true
+                if(err){
+                    res.json({ status: 102, message: 'Authentication failed. Wrong password.' });
+                }
+                // if user is found and password is right
+                // create a token
+                if(resp == true) {
+                    var token = jwt.sign(user, app.get('superSecret'), {
+                        expiresIn: '1440m' // expires in 24 hours
+                    });
+                    app.set('token', 'token');
+                    app.set('id', user.id);
+
+                    // return the information including token as JSON
+                    res.json({
+                        status: 100,
+                        message: 'Ok',
+                        token: token,
+                        id: user.id
+                    });
+                } else {
+                    res.json({ status: 102, message: 'Authentication failed. User not found.' });
+                }
+
+            });
         }
 
     });
@@ -516,7 +874,7 @@ apiRoutes.get('/questions', function(req, res) {
 });
 // route to return all Categories (GET http://localhost:8080/api/categories)
 apiRoutes.get('/categories', function(req, res) {
-    categories.find({}, function(err, categories) {
+    categories.find({$or: [{"is_deleted":0},{ 'is_deleted':{'$exists':false} }] }, function(err, categories) {
         res.json(categories);
     });
 });
@@ -559,11 +917,14 @@ apiRoutes.delete('/delete', function(req, res) {
     // route to get user information 
 apiRoutes.get('/user/:id', function(req, res) {
         console.log(req.params.id)
-        User.findOne({ _id: req.params.id },
+        User.findOne({ _id: req.params.id },{password:0}).populate('questions').exec(
                 function(err, user) {
                     if (err) {
                         res.json({ status: 102, message: 'Unknown' })
                     } else {
+                        var hostname = req.get('host');
+                        user['avtar'] = req.protocol+'://'+ hostname + '/images/user/' + user.avtar;
+                        console.log(user.avtar);
                         res.json({ status: 100, message: 'Ok', response: user })
                     }
                 })
@@ -627,4 +988,5 @@ apiRoutes.post('/status', function(req, res) {
             email: req.body.email
           },function(err, user){*/
 })
+
 module.exports = apiRoutes;

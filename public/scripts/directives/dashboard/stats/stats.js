@@ -7,7 +7,7 @@
  * # adminPosHeader
  */
 angular.module('sbAdminApp')
-    .directive('stats',function() {
+    .directive('stats',function($http) {
     	return {
   		templateUrl:'scripts/directives/dashboard/stats/stats.html',
   		restrict:'E',
@@ -15,13 +15,13 @@ angular.module('sbAdminApp')
   		scope: {
         'model': '=',
         'comments': '@',
-        'number': '@',
+        'number': '=',
+        'totalclient': '=',
         'name': '@',
         'colour': '@',
         'details':'@',
         'type':'@',
-        'goto':'@'
+        'goto':'='
   		}
-  		
   	}
   });

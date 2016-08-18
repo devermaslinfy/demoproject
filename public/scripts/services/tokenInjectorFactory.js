@@ -11,8 +11,16 @@
 			return {
 				request: function(config) {
 					var token = $localStorage['token']
-					//console.log(token);
-					if (token == null || (config.noToken && config.noToken === true)) {
+
+					if(config.url.indexOf('checkEmailForgot') > 0){
+
+					} else if(config.url.indexOf('forgotpass') > 0){
+
+					}
+					else if(config.url.indexOf('resetpass') > 0){
+						
+					}
+					else if (token == null || (config.noToken && config.noToken === true)) {
 						//return config;
 						$location.path('/login');
 					}
@@ -22,9 +30,14 @@
 				},
 				responseError: function(response) {
 					if(response.status === 102  || response.status === 401 || response.status === 403) {
-                        $location.path('/login');
+                        //$location.path('/login');
                     }
-                    return $q.reject(rejection);
+                    if(response.status === 200 ){
+                    	$location.path('/forgotpass');
+                    } else{
+                    	return $q.reject(response);
+                    }
+                    
 				//	if (rejection.status == '401') {
 				//		authApi.logout();
 					//	return $q.reject(rejection);

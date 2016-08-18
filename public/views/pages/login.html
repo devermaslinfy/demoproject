@@ -9,13 +9,16 @@
                 <div class="panel-body">
                     <form name="loginForm" role="form" ng-controller="LoginCtrl" ng-submit="submit()">
                         <fieldset>
+                            <div ng-if ="status" class="form-group">
+                                <span class="help-block error">Your credential is invalid.</span>
+                            </div>
                             <div class="form-group"  ng-class="{'has-error': loginForm.email.$invalid && (loginForm.email.$dirty)}">
-                                <input ng-model="email" class="form-control" placeholder="E-mail" name="email" type="email" cuemail required autofocus>
+                                <input ng-model="email" class="form-control" placeholder="E-mail" name="email" type="email" cuemail required autofocus  ng-pattern='/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'>
 <!--                                 <span class="help-block" ng-show="loginForm.email.$error.required && loginForm.email.$dirty">This field is required</span> -->
                             </div>
                             <div class="form-group" ng-messages="loginForm.email.$error" ng-if="loginForm.email.$dirty">
                               <span class="help-block error" ng-message="required">This field is required.</span>
-                              <span class="help-block error" ng-message="email">Your email address is invalid.</span>
+                              <span class="help-block error" ng-message="pattern">Your email address is invalid.</span>
                               <span class="help-block error" ng-show="loginForm.email.$error.cuemail && loginForm.email.$dirty">Your email does not exist!</span>
 
                             </div>
@@ -25,11 +28,14 @@
                             <div class="form-group" ng-messages="loginForm.password.$error" ng-if="loginForm.password.$dirty">
                               <span class="help-block error" ng-message="required">This field is required.</span>
                             </div>
-                            <div class="checkbox">
+                            <div class="form-group">
+                                <a ui-sref="forgotpass">Forgot Password</a>
+                            </div>
+<!--                             <div class="checkbox">
                                 <label>
                                     <input name="remember" type="checkbox" value="Remember Me">Remember Me
                                 </label>
-                            </div>
+                            </div> -->
                             <!-- <pre>list={{list}}</pre> -->
                             <!-- Change this to a button or input when using this as a form -->
                             <input type="submit" ng-disabled="loginForm.$invalid" class="btn btn-lg btn-success btn-block" value="Login">

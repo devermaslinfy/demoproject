@@ -1,0 +1,1 @@
+exports.IMAGE_PATH_USER =  __dirname + 'images/user/';

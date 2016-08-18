@@ -14,79 +14,136 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <form role="form">
-                            <div class="col-lg-6 form-group rquired">
+                        <form name="clientSignup" role="form" ng-submit="editMode ? edit(avtar) : save(avtar)">
+                            <div ng-class="{'has-error': clientSignup.name.$invalid && (clientSignup.name.$dirty)}" class="col-lg-6 form-group rquired">
                                 <label class="control-label">Name</label>
-                                <input required="true" class="form-control" placeholder="Enter Name">
-                             <!--    <p class="help-block">Example block-level help text here.</p> -->
+                                <input name="name" ng-model="client.name" required="true" class="form-control" placeholder="Enter Name" ng-maxlength="100" ng-pattern="/^[a-zA-Z ]*$/"  checktype="{{ editMode ? 'editclient' : 'client' }}" preval="{{ preval }}" check-unique>
+                                <div class="col-lg-6 form-group" ng-messages="clientSignup.name.$error" ng-if="clientSignup.name.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="checkUnique">This Client name already exist.</span>
+                                  <span class="help-block error" ng-message="maxlength">This field maximum length is 100 characters.</span>
+                                  <span class="help-block error" ng-message="pattern">Please enter valid characters.</span>
+                                </div>
                             </div>
                             <div class=" col-lg-6 form-group">
                                 <label>Select Categoey</label>
-                                <select class="form-control">
-                                    <option value="1">Bollywood</option>
-                                    <option value="2" >Sports</option>
-                                    <option value="3" >Footwal</option>
-                                    <option value="4" >Cricket</option>
-                                    <option value="5">Yoga</option>
+                                <select class="form-control" ng-model="client.category" name="category" >
+                                    <option value="">---Please select Categoey---</option>
+                                    <!-- ng-selected="{{category.name == 'premier'}}" -->
+                                    <option 
+                                            ng-selected="{{client.category == category._id}}"
+                                            ng-repeat="category in categories"
+                                            value="{{category._id}}">
+                                      {{category.name}}
+                                    </option>
                                 </select>
                             </div>
                             <div class="clearfix"></div>
-                            <div class=" col-lg-6 form-group rquired">
-                                <label class="control-label">Avtar Image</label>
-                                <input required="true" type="file">
+                            <div ng-class="{'has-error': clientSignup.avtar.$invalid && (clientSignup.avtar.$dirty)}" class=" col-lg-6 form-group rquired">
+                                <label class="control-label">Avtar Image</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <img ng-show="clientSignup.avtar.$valid" ngf-thumbnail="avtar" class="thumb">
+                                    {{ editMode }}
+                                    <img ng-show="editMode && !clientSignup.avtar.$dirty" width="100px" height="100px" src="images/client/{{ client.image_url || 'no_image.jpeg' }}" >
+                                    <!-- <input type="file"  class="form-control" ngf-select  name = "avtar" ng-model="avtar" file-model="avtar" ngf-resize="{width: 100, height: 100}" ngf-pattern="'image/*'" > -->
+                                    <!-- {{ editMode }} -->
+                                    <input type="file" ngf-select ng-model="avtar" name="avtar" accept="image/*" ngf-max-size="2MB" ng-required="{{ !editMode }}" ngf-model-invalid="errorFile" ngf-resize="{width: 100, height: 100}">
+                                    <div class="col-xs-5 " ng-messages="clientSignup.avtar.$error" ng-if="clientSignup.avtar.$dirty">
+                                        <span class="help-block error" ng-message="required">This field is required.</span>
+                                        <span class="help-block error" ng-message="maxSize">File too large {{errorFile.size / 1000000|number:1}}MB: max 2M.</span>
+                                    </div>
                             </div>
-                            <div class=" col-lg-6 form-group rquired">
+                            <div ng-class="{'has-error': clientSignup.business_type.$invalid && (clientSignup.business_type.$dirty)}" class=" col-lg-6 form-group rquired">
                                 <label class="control-label">Select Business</label>
-                                <select required="true" class="form-control">
-                                    <option value="" selected>Business Type</option>
-                                    <option value="1">It</option>
-                                    <option value="2" >Civil</option>
+                                <select required="true" class="form-control" name="business_type" ng-model="client.business_type">
+                                    <option value="">---Please select Business---</option>
+                                    <option 
+                                            ng-selected="{{client.busines_type == busines._id}}"
+                                            ng-repeat="busines in business"
+                                            value="{{busines._id}}">
+                                      {{busines.name}}
+                                    </option>
                                 </select>
+                                <div class="col-lg-6 form-group" ng-messages="clientSignup.business_type.$error" ng-if="clientSignup.business_type.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                </div>
                             </div>
                             <div class="clearfix"></div>
 <!--                             <div class="form-group">
                                 <label>Static Control</label>
                                 <p class="form-control-static">email@example.com</p>
                             </div> -->
-                            <div class=" col-lg-6 form-group rquired ">
+                            <div ng-class="{'has-error': clientSignup.description.$invalid && (clientSignup.description.$dirty)}" class=" col-lg-6 form-group rquired ">
                                 <label class="control-label" >Description</label>
-                                <input required="true" type="text" class="form-control" placeholder="Enter Description">
+                                <input name="description" ng-model="client.description" required="true" type="text" class="form-control" placeholder="Enter Description" ng-maxlength="{{ maxlength }}">
+                                <div class="col-lg-6 form-group" ng-messages="clientSignup.description.$error" ng-if="clientSignup.description.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="required">This field maximum length is 4096 characters.</span>
+                                </div>
                             </div>
-                            <div class=" col-lg-6 form-group">
+                            <div ng-class="{'has-error': clientSignup.phone.$invalid && (clientSignup.phone.$dirty)}" class=" col-lg-6 form-group">
                                 <label>Phone</label>
-                                <input class="form-control" placeholder="Enter Phone Number">
+                                <input type="text" ng-model="client.phone.phone1" name="phone" class="form-control" placeholder="Enter Phone Number" ng-pattern="/^[0-9]{8,10}$/">
+                                <div class="col-lg-6 form-group" ng-messages="clientSignup.phone.$error" ng-if="clientSignup.phone.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="pattern">Please enter a valid phone number.</span>
+                                </div>
                             </div>
                             <div class="clearfix"></div>
                             <div class=" col-lg-6 form-group">
                                 <label>Latitude</label>
-                                <input class="form-control" placeholder="Enter Latitude">
+                                <input ng-model="client.latitude" name="latitude" class="form-control" placeholder="Enter Latitude" ng-pattern="/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/">
+                                <div class="col-lg-6 form-group" ng-messages="clientSignup.latitude.$error" ng-if="clientSignup.latitude.$dirty">
+                                  <span class="help-block error" ng-message="pattern">Please enter a valid latitude.</span>
+                                </div>
                             </div>
                             <div class=" col-lg-6 form-group">
                                 <label>Longitude</label>
-                                <input class="form-control" placeholder="Enter Longitude">
+                                <input ng-model="client.longitute" name="longitute" class="form-control" placeholder="Enter Longitude" ng-pattern="/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/">
+                                <div class="col-lg-6 form-group" ng-messages="clientSignup.longitute.$error" ng-if="clientSignup.longitute.$dirty">
+                                  <span class="help-block error" ng-message="pattern">Please enter a valid longitute.</span>
+                                </div>
                             </div>
                             <div class="clearfix"></div>
-                             <div class=" col-lg-6 form-group rquired">
+                             <div  ng-class="{'has-error': clientSignup.street.$invalid && (clientSignup.street.$dirty)}" class=" col-lg-6 form-group rquired">
                                 <label class="control-label" >Street</label>
-                                <input required="true" class="form-control" placeholder="Enter Street">
+                                <input name="street" ng-model="client.address.street" required="true" class="form-control" placeholder="Enter Street" ng-maxlength="100">
+                                <div class="col-lg-6 form-group" ng-messages="clientSignup.street.$error" ng-if="clientSignup.street.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="maxlength">This field maximum length is 100 characters.</span>
+                                </div>
                             </div>
-                            <div class=" col-lg-6 form-group rquired">
+                            <div ng-class="{'has-error': clientSignup.city.$invalid && (clientSignup.city.$dirty)}" class=" col-lg-6 form-group rquired">
                                 <label class="control-label" >City</label>
-                                <input required="true" class="form-control" placeholder="Enter City">
+                                <input name="city" ng-model="client.address.city" required="true" class="form-control" placeholder="Enter City">
+                                <div class="col-lg-6 form-group" ng-maxlength="100" ng-messages="clientSignup.street.$error" ng-if="clientSignup.street.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="maxlength">This field maximum length is 100 characters.</span>
+                                </div>
                             </div>
-                            <div class="clearfix"></div>
+                            <div ng-class="{'has-error': clientSignup.country.$invalid && (clientSignup.country.$dirty)}" class="clearfix"></div>
                             <div class=" col-lg-6 form-group rquired">
                                 <label class="control-label" >Country</label>
-                                <input required="true" class="form-control" placeholder="Enter Country">
+                                <input name="country" ng-maxlength="100" ng-model="client.address.country" required="true" class="form-control" placeholder="Enter Country">
+                                <div class="col-lg-6 form-group" ng-messages="clientSignup.country.$error" ng-if="clientSignup.country.$dirty">
+                                  <span class="help-block error" ng-message="required">This field is required.</span>
+                                  <span class="help-block error" ng-message="maxlength">This field maximum length is 100 characters.</span>
+                                </div>
                             </div>
-                            <div class=" col-lg-6 form-group rquired">
+                            <div ng-class="{'has-error': clientSignup.zip.$invalid && (clientSignup.zip.$dirty)}" class=" col-lg-6 form-group rquired">
                                 <label class="control-label" >Zip</label>
-                                <input required="true" class="form-control" placeholder="Enter Zip">
+                                <input ng-pattern="/^[A-Za-z0-9]{5,6}$/" required ng-minlength="5" ng-maxlength="8"  name="zip" ng-model="client.address.zip" ng-maxlength="6" required="true" class="form-control" placeholder="Enter Zip">
+                                <div class="col-lg-6 form-group" ng-messages="clientSignup.zip.$error" ng-if="clientSignup.zip.$dirty">
+                                      <span class="help-block error" ng-message="required">This field is required.</span>
+                                      <span class="help-block error" ng-message="maxlength">This field maximum length is 8 digit.</span>
+                                      <span class="help-block error" ng-message="minlength">This field minimum length is 5 digit.</span>
+                                      <span class="help-block error" ng-message="pattern">Please enter a valid zip code.</span>
+        
+                                </div>
                             </div>
                             <div class="clearfix"></div>
 
                             <div class="col-lg-12 form-group">
-                            <button type="submit" class="btn btn-default">Submit Button</button>
+                            <button ng-disabled="clientSignup.$invalid" type="submit" class="btn btn-default">Submit Button</button>
                             <a ui-sref="dashboard.clients" class="btn btn-default">Cancel</a>
                             </div>
                         </form>

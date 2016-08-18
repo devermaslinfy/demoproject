@@ -22,7 +22,13 @@ var userSchema = new Schema({
     password: String,
     avtar: String,
     age: Number,
-    questions: Object,
+    dob:Date,
+    questions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'questions'
+    }],
+    //answer: Array,
+    answer : { type : Array , "default" : [] },
     add_date: Date,
     last_login: Date,
     last_edit: Date, 

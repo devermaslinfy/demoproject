@@ -14,42 +14,62 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <form id="questionForm" method="post" class="form-horizontal">
-                            <div class="form-group">
+                        <form name="questionForm" id="questionForm" method="post" class="form-horizontal" ng-submit="editModeCat ? edit() : save()">
+                            <div ng-class="{'has-error': questionForm.question.$invalid && (questionForm.question.$dirty)}" class="form-group required">
                                 <label class="col-xs-3 control-label">Question</label>
-                                <label class="col-xs-1 control-label">:</label>
-                                <div class="col-xs-5">
-                                    <input ng-hide="true" type="text" class="form-control" name="question" />
-                                     <span  class="help-block"> Question</span>
+                                <div  class="col-xs-5">
+                                    <input  type="text" ng-model="question.question" class="form-control" name="question" ng-maxlength="{{ maxlength }}" check-unique required checktype="{{ editModeCat ? 'editquestion' : 'question' }}" />
+                                     <!-- <span  class="help-block"> Question</span> -->
+                                    <div class="col-lg-6 form-group" ng-messages="questionForm.question.$error" ng-if="questionForm.question.$dirty">
+                                      <span class="help-block error" ng-message="required">This field is required.</span>
+                                      <span class="help-block error" ng-message="maxlength">This field maximum length is 1024 characters.</span>
+                                      <span class="help-block error" ng-message="checkUnique" >This question already exist!</span>
+
+                                    </div>
                                 </div>
 <!--                             <div class="col-xs-4">
                                 <button type="button" class="btn btn-default addButton"><i class="fa fa-plus"></i></button>
                             </div> -->
                             </div>
 
-                            <div class="form-group">
+                            <div ng-class="{'has-error': questionForm.option1.$invalid && (questionForm.option1.$dirty)}" class="form-group required">
                                 <label class="col-xs-3 control-label">Option(A)</label>
                                 <div class="col-xs-5">
-                                    <input type="text" class="form-control" name="option[]" />
+                                    <input type="text" ng-model="question.answer.option1" class="form-control" name="option1" ng-maxlength="{{ maxlength }}" required/>
+                                    <div class="col-lg-6 form-group" ng-messages="questionForm.option1.$error" ng-if="questionForm.option1.$dirty">
+                                      <span class="help-block error" ng-message="required">This field is required.</span>
+                                      <span class="help-block error" ng-message="maxlength">This field maximum length is 1024 characters.</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-xs-3 control-label">Options(B)</label>
+                            <div ng-class="{'has-error': questionForm.option2.$invalid && (questionForm.option2.$dirty)}" class="form-group required">
+                                <label class="col-xs-3 control-label">Option(B)</label>
                                 <div class="col-xs-5">
-                                    <input type="text" class="form-control" name="option[]" />
+                                    <input type="text" ng-model="question.answer.option2" class="form-control" name="option2" ng-maxlength="{{ maxlength }}" required/>
+                                    <div class="col-lg-6 form-group" ng-messages="questionForm.option2.$error" ng-if="questionForm.option2.$dirty">
+                                      <span class="help-block error" ng-message="required">This field is required.</span>
+                                      <span class="help-block error" ng-message="maxlength">This field maximum length is 1024 characters.</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="col-xs-3 control-label">Options(C)</label>
+                            <div ng-class="{'has-error': questionForm.option3.$invalid && (questionForm.option3.$dirty)}" class="form-group required">
+                                <label class="col-xs-3 control-label">Option(C)</label>
                                 <div class="col-xs-5">
-                                    <input type="text" class="form-control" name="option[]" />
+                                    <input type="text" ng-model="question.answer.option3" class="form-control" name="option3" ng-maxlength="{{ maxlength }}" required/>
+                                    <div class="col-lg-6 form-group" ng-messages="questionForm.option3.$error" ng-if="questionForm.option3.$dirty">
+                                      <span class="help-block error" ng-message="required">This field is required.</span>
+                                      <span class="help-block error" ng-message="maxlength">This field maximum length is 1024 characters.</span>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <label class="col-xs-3 control-label">Options(D)</label>
+                            <div ng-class="{'has-error': questionForm.option4.$invalid && (questionForm.option4.$dirty)}" class="form-group required">
+                                <label class="col-xs-3 control-label">Option(D)</label>
                                 <div class="col-xs-5">
-                                    <input type="text" class="form-control" name="option[]" />
+                                    <input type="text" ng-model="question.answer.option4" class="form-control" name="option4" ng-maxlength="{{ maxlength }}" required/>
+                                    <div class="col-lg-6 form-group" ng-messages="questionForm.option4.$error" ng-if="questionForm.option4.$dirty">
+                                      <span class="help-block error" ng-message="required">This field is required.</span>
+                                      <span class="help-block error" ng-message="maxlength">This field maximum length is 1024 characters.</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -66,7 +86,7 @@
 
                             <div class="form-group">
                                 <div class="col-xs-5 col-xs-offset-3">
-                                    <button type="submit" class="btn btn-default">Submit</button>
+                                    <button ng-disabled="questionForm.$invalid" type="submit" class="btn btn-default">Submit</button>
                                     <a ui-sref="dashboard.questions" class="btn btn-default">Cancel</a>
                                 </div>
                             </div>
